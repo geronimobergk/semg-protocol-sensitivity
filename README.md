@@ -19,6 +19,14 @@ This repo uses `uv`:
 uv sync
 ```
 
+## Pre-commit hooks
+
+The repository bundles `.pre-commit-config.yaml`.
+
+1. Install `pre-commit`
+2. Enable the hooks in your working tree: `pre-commit install`.
+3. Run the hooks manually (for example before pushing) with `pre-commit run --all-files`.
+
 ## Quick sanity run (no raw data)
 
 Runs the full pipeline on a tiny fixture dataset (CPU) to validate the install:
