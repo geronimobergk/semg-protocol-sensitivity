@@ -38,7 +38,7 @@ Because heavy window overlap can introduce information leakage, all dataset spli
 
 ### Models
 
-Two ** spatio-temporal CNN architectures** are evaluated:
+Two **spatio-temporal CNN architectures** are evaluated:
 
 * **ST-CNN:** baseline spatio-temporal convolutional network
 * **ST-Attn-CNN:** identical backbone augmented with spatio-temporal attention
