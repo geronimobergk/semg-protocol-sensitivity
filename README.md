@@ -1,6 +1,6 @@
 # Evaluation Protocols Matter — A Controlled Study on Protocol Sensitivity in sEMG CNNs
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/geronimos/tinyml-semig-classifier/blob/main/notebooks/00_colab_quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/geronimobergk/semg-protocol-sensitivity/blob/main/notebooks/00_colab_quickstart.ipynb)
 
 Config-driven PyTorch experiments to quantify how **evaluation protocol choice** changes
 absolute performance and **model ranking** for CNN-based sEMG classifiers on
