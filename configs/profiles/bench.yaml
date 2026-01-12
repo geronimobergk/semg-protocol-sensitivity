@@ -1,0 +1,13 @@
+profile: bench
+
+train:
+  seeds: [1]
+  max_epochs: 1
+  checkpoint:
+    save_best: false
+    save_last: false
+  num_workers: 0
+plan:
+  max_jobs: 8
+  models: [st_cnn_gn_tiny, st_attn_cnn_gn_tiny]
+  protocols: [pooled_repdisjoint, loso, single_subject_repdisjoint]

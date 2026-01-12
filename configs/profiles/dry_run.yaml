@@ -1,0 +1,41 @@
+# Dry-run overlay: exercise the full experiment cartesian product
+# with real data, subject limits, and capped budgets.
+experiment:
+  runs_root: runs/protocol_sensitivity_semg_cnn/dry_run
+  reports_root: reports/protocol_sensitivity_semg_cnn/dry_run
+
+profile: dry_run
+
+dataset:
+  subjects: "1-4"
+
+preprocess:
+  id: dryrun_win200_hop20_exB_norest
+
+manifest:
+  id: dryrun_win200_hop20_exB_norest
+
+protocols:
+  loso:
+    subjects: "1-4"
+
+  single_subject_repdisjoint:
+    subjects: "1-4"
+
+train:
+  device: auto
+  seeds: [1]
+  # Hard cap on work so dry-runs are predictable.
+  max_steps: 20
+  max_epochs: 2
+  batch_size: 4
+  num_workers: 2
+  log_every: 5
+
+eval:
+  max_batches: 20
+
+plan:
+  max_jobs: 4
+  models: [st_cnn_gn_tiny, st_attn_cnn_gn_tiny]
+  protocols: [pooled_repdisjoint, loso, single_subject_repdisjoint]

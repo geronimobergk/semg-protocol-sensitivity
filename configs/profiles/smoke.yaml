@@ -1,0 +1,76 @@
+profile: smoke
+
+dataset:
+  source: fixture
+  fixture_path: tests/fixtures/tiny_windows_subject1_2.npz
+  sampling_rate_hz: 2000
+  channels: 2
+  subjects: [1, 2]
+
+preprocess:
+  id: fixture_tiny
+  window_ms: 4
+  hop_ms: 2
+  window_samples: 8
+  hop_samples: 4
+  cache: false
+
+manifest:
+  id: fixture_tiny
+
+protocols:
+  pooled_repdisjoint:
+    reps:
+      all: [1, 2, 3]
+      test: [2]
+      val: [3]
+  loso:
+    subjects: [1, 2]
+    reps:
+      all: [1, 2, 3]
+      test: [2]
+      val: [3]
+
+models:
+  tiny_cnn:
+    architecture: ST_CNN_GN
+    params:
+      num_electrodes: 2
+      num_samples: 8
+      conv_channels: [4]
+      kernel_size: [3, 3]
+      pool_sizes: [[1, 1]]
+      conv_dropout: 0.0
+      gn_groups: 1
+      head_hidden: [8, 4]
+      head_dropout: 0.0
+      num_classes: 2
+
+train:
+  device: cpu
+  seeds: [0]
+  max_steps: 10
+  max_epochs: 1
+  batch_size: 4
+  num_workers: 0
+  log_every: 1
+  optimizer:
+    name: adamw
+    lr: 0.001
+    weight_decay: 0.0
+  checkpoint:
+    primary: last
+    save_best: true
+    save_last: true
+  early_stopping:
+    enabled: false
+
+eval:
+  max_batches: 5
+  latency:
+    enabled: false
+
+plan:
+  models: [tiny_cnn]
+  protocols: [pooled_repdisjoint, loso]
+  max_jobs: 1

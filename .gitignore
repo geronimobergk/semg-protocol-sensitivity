@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+.env.*
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.coverage
+htmlcov/
+*.log
+
+# Data / outputs
+data/raw/
+data/interim/
+data/processed/
+runs/
+reports/figures/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+artifacts/*
+!artifacts/README.md
+reports/*
+!reports/README.md
+*.tar.gz
+
+# OS
+.DS_Store

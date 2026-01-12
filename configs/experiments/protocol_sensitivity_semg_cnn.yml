@@ -1,0 +1,263 @@
+experiment:
+  id: protocol_sensitivity_semg_cnn
+  description: >
+    Evaluating protocol sensitivity of CNN-based sEMG classifiers on
+    the Ninapro DB2 dataset using different training/evaluation protocols.
+    Comparing a standard spatiotemporal CNN with and without attention
+    mechanisms.
+  artifacts_root: artifacts/protocol_sensitivity_semg_cnn
+  runs_root: runs/protocol_sensitivity_semg_cnn
+  reports_root: reports/protocol_sensitivity_semg_cnn
+
+dataset:
+  name: ninapro_db2
+  raw_dir: data/raw
+  sampling_rate_hz: 2000
+  channels: 12
+  exercises: [B]
+  keep_rest: false
+  disambiguate_exercises: true
+  subjects: "1-40" # Use e.g., "1, 2" for quick tests. Use "1-40" for full experiments
+  download:
+    workers: 8
+    keep_zip: false
+    timeout: 30
+    retries: 3
+    chunk_size: 1048576  # 1 MB
+    skip_existing: true
+
+preprocess:
+  id: win200_hop20_exB_norest
+  window_ms: 200
+  hop_ms: 20
+  window_samples: 400
+  hop_samples: 40
+  # True = If the inputs + relevant config fields are identical to a previous run, reuse the existing artifacts instead of recomputing them.
+  cache: true
+  output:
+    windows_path: "{artifacts_root}/data/{preprocess_id}/windows_s{subject_id}.npy"
+    meta_path: "{artifacts_root}/data/{preprocess_id}/meta.json"
+
+manifest:
+  id: win200_hop20_exB_norest
+  output:
+    manifest_csv: "{artifacts_root}/manifests/{manifest_id}/manifest.csv"
+
+splits:
+  # True = if manifest + protocol config are unchanged, reuse existing split files.
+  cache: true
+  allow_missing_classes: false
+
+protocols:
+  pooled_repdisjoint:
+    # Pooled cross-subject evaluation with repetition-disjoint splits.
+    # Single shared model trained on all subjects.
+    # Train/val/test are split by repetition labels, pooled across subjects.
+    # Measures repetition-level generalization for seen users.
+    type: pooled_repdisjoint
+    output_dir: "{artifacts_root}/splits/protocol=pooled_repdisjoint"
+    
+    reps:
+      # Using a single, commonly adopted split isolates protocol effects
+      # and avoids conflating results with repetition-split variability.
+      all: [1, 2, 3, 4, 5, 6]
+      test: [2, 5]  # fixed test repetitions for comparability
+      val: [4]      # validation drawn from training subjects only
+
+  loso:
+    # Leave-One-Subject-Out (LOSO) cross-subject evaluation.
+    # For each fold, one subject is fully held out for testing.
+    # Validation uses only training subjects; the test subject is never
+    # used for model selection or early stopping.
+    type: loso
+    output_dir: "{artifacts_root}/splits/protocol=loso"
+    
+    # Defines which subjects participate in LOSO.
+    # One split instance is created per subject listed here.
+    # Example: "1-40" → 40 LOSO runs (each subject held out once).
+    subjects: "1-40"
+    
+    reps:
+      # Repetition-based train/val/test definition.
+      # For each LOSO instance:
+      #  - train/val use all subjects except the held-out test subject
+      #  - test uses only the held-out subject with the specified test repetitions
+      all: [1, 2, 3, 4, 5, 6]
+      test: [2, 5]  # evaluation on fixed repetitions for protocol alignment
+      val: [4]      # repetition-disjoint validation on training subjects
+
+  single_subject_repdisjoint:
+    # Single-subject evaluation with repetition-disjoint splits.
+    # A separate model is trained for each subject.
+    # Measures repetition-level generalization within each user.
+    # Serves as a personalization upper bound.
+    type: single_subject_repdisjoint
+    output_dir: "{artifacts_root}/splits/protocol=single_subject_repdisjoint"
+    
+    # One split instance (and one model) is created per subject listed here.
+    # Training, validation, and testing are performed within the same subject
+    # using repetition-disjoint splits.
+    subjects: "1-40"
+    
+    reps:
+      # Repetition-based split within each subject.
+      # Train/val/test are defined by repetition labels only,
+      # with no data shared across splits for the same subject.
+      all: [1, 2, 3, 4, 5, 6]
+      test: [2, 5]   # subject-specific test repetitions
+      val: [4]       # subject-specific validation repetition
+
+models:
+  st_cnn_gn:
+    architecture: ST_CNN_GN
+    params:
+      # Input shape: (B, H_electrodes, W_time)
+      num_electrodes: 12
+      num_samples: 400
+      
+      # Backbone
+      conv_channels: [64, 64, 128]
+      kernel_size: [3, 3]
+      pool_sizes: [[1, 4], [2, 2], [2, 2]]
+      conv_dropout: 0.20
+      
+      # Normalization
+      gn_groups: 8
+
+      # Head (LN-based MLP)
+      head_hidden: [256, 128]
+      head_dropout: 0.30
+
+      # Task
+      num_classes: 17
+
+  st_attn_cnn_gn:
+    architecture: ST_Attn_CNN_GN
+    params:
+      # Input shape: (B, H_electrodes, W_time)
+      num_electrodes: 12
+      num_samples: 400
+      
+      # Backbone
+      conv_channels: [64, 64, 128]
+      kernel_size: [3, 3]
+      pool_sizes: [[1, 4], [2, 2], [2, 2]]
+      conv_dropout: 0.20
+      
+      # Normalization
+      gn_groups: 8
+      attn_temporal_kernel: 7
+      attn_spatial_kernel: 3
+      
+      # Head (LN-based MLP)
+      head_hidden: [256, 128]
+      head_dropout: 0.30
+      
+      # Task
+      num_classes: 17
+
+  st_cnn_gn_tiny:
+    architecture: ST_CNN_GN
+    params:
+      # Input shape: (B, H_electrodes, W_time)
+      num_electrodes: 12
+      num_samples: 400
+
+      # Backbone (aggressive early downsampling)
+      conv_channels: [24, 32, 64]
+      kernel_size: [3, 3]
+      pool_sizes: [[1, 10], [2, 2], [2, 2]]
+      conv_dropout: 0.15
+
+      # Normalization
+      gn_groups: 8
+
+      # Head (LN-based MLP)
+      head_hidden: [96, 48]
+      head_dropout: 0.25
+
+      # Task
+      num_classes: 17
+
+  st_attn_cnn_gn_tiny:
+    architecture: ST_Attn_CNN_GN
+    params:
+      # Input shape: (B, H_electrodes, W_time)
+      num_electrodes: 12
+      num_samples: 400
+
+      # Backbone (aggressive early downsampling)
+      conv_channels: [24, 32, 64]
+      kernel_size: [3, 3]
+      pool_sizes: [[1, 10], [2, 2], [2, 2]]
+      conv_dropout: 0.15
+
+      # Normalization
+      gn_groups: 8
+      attn_temporal_kernel: 7
+      attn_spatial_kernel: 3
+
+      # Head (LN-based MLP)
+      head_hidden: [96, 48]
+      head_dropout: 0.25
+
+      # Task
+      num_classes: 17
+
+train:
+  # True = reuse existing run directories instead of re-training.
+  cache: true
+  device: auto
+  # Multiple seeds to average out optimization stochasticity (init, batch order, dropout).
+  # Ensures model comparisons are not driven by a lucky or unlucky run.
+  seeds: [1, 3, 7]
+
+  
+  max_epochs: 50 # Fixed budget
+  early_stopping:
+    enabled: false
+    monitor: val_loss
+    mode: min
+    patience: 10
+    min_epochs: 10
+
+  batch_size: 512
+  # DataLoader workers per training run.
+  # Controls intra-run data loading parallelism only.
+  # Kept small (or even 0) since windows are precomputed and LOSO scales across runs, not batches.
+  num_workers: 0
+  log_every: 50
+  normalization:
+    type: zscore
+    eps: 1e-8
+
+  optimizer:
+    name: adamw
+    lr: 0.001
+    weight_decay: 0.0001
+
+  scheduler:
+    name: cosine
+    warmup_epochs: 5
+    min_lr: 0.00001
+
+  checkpoint:
+    primary: last        # last|best (what eval/compare uses by default)
+    save_best: true
+    save_last: true
+
+eval:
+  metrics: [balanced_accuracy, macro_f1]
+  latency:
+    enabled: false
+    device: auto
+    warmup: 50
+    iters: 200
+  save_predictions: false
+
+plan:
+  models: [st_cnn_gn, st_attn_cnn_gn, st_cnn_gn_tiny, st_attn_cnn_gn_tiny]
+  protocols: [pooled_repdisjoint, loso, single_subject_repdisjoint]
+  # Maximum number of parallel training runs (separate processes).
+  # This is the primary lever for speeding up LOSO by running multiple folds in parallel.
+  max_jobs: 10

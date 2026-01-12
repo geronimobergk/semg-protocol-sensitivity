@@ -1,0 +1,11 @@
+# Full run part 1: large models only.
+profile: full_part1
+
+plan:
+  models: [st_cnn_gn, st_attn_cnn_gn]
+  protocols: [pooled_repdisjoint, loso, single_subject_repdisjoint]
+  max_jobs: 10 # Suitable to run on 10x NVIDIA A40
+
+train:
+  seeds: [7]
+  num_workers: 0

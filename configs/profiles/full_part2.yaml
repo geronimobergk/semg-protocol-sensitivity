@@ -1,0 +1,11 @@
+# Full run part 2: lightweight models with multi-seed averaging.
+profile: full_part2
+
+plan:
+  models: [st_cnn_gn_tiny, st_attn_cnn_gn_tiny]
+  protocols: [pooled_repdisjoint, loso, single_subject_repdisjoint]
+  max_jobs: 21 # Suitable for 7x NVIDIA RTX 4000 Ada
+  
+train:
+  seeds: [1, 3, 7]
+  num_workers: 0

@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata in this file.
+title: Evaluation Protocols Matter — A Controlled Study on Protocol Sensitivity in Compact sEMG CNNs
+type: software
+authors:
+  - name: tinyml-semig-classifier contributors
+version: 0.1.0
+license: MIT
+keywords:
+  - sEMG
+  - electromyography
+  - gesture recognition
+  - evaluation protocol
+  - protocol sensitivity
+  - CNN
+  - PyTorch
+  - reproducibility

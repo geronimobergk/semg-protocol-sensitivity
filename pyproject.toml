@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tinyml_semg_classifier"
+version = "0.1.0"
+description = "Supervised tiny sEMG classifier for NinaPro DB2 Exercise B."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "scipy",
+  "pyyaml",
+  "torch",
+  "tqdm",
+  "requests>=2.32.5",
+  "urllib3<2",
+  "pytest>=9.0.2",
+  "ruff>=0.14.10",
+]
+
+[project.scripts]
+tinyml-semg = "tinyml_semg_classifier.cli:main"
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+  "ruff"
+]
+
+[tool.ruff]
+line-length = 88
+
+
+[tool.isort]
+profile = "black"
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tinyml_semg_classifier*"]
+exclude = ["tests*", "notebooks*", "data*", "configs*", "reports*", "scripts*"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.data-files]
+configs = ["configs/**/*.yaml"]
+scripts = ["scripts/*.sh"]
