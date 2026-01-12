@@ -111,13 +111,15 @@ def validate_and_freeze_profile(cfg: dict) -> None:
     dataset_cfg = cfg.setdefault("dataset", {})
     splits_cfg = cfg.setdefault("splits", {})
 
-    if profile in {"smoke", "dev", "dev_mini"}:
+    capped_profiles = {"smoke", "dev", "dev_mini", "colab_quickstart"}
+    if profile in capped_profiles:
         plan_cfg["max_jobs"] = 1
         train_cfg["num_workers"] = 0
         train_cfg["device"] = "cpu"
-        max_steps_cap = 10 if profile == "smoke" else 50
-        max_epochs_cap = 1 if profile == "smoke" else 3
-        max_batches_cap = 5 if profile == "smoke" else 20
+        is_smoke_like = profile in {"smoke", "colab_quickstart"}
+        max_steps_cap = 10 if is_smoke_like else 50
+        max_epochs_cap = 1 if is_smoke_like else 3
+        max_batches_cap = 5 if is_smoke_like else 20
         max_steps = train_cfg.get("max_steps")
         if max_steps is None or int(max_steps) > max_steps_cap:
             train_cfg["max_steps"] = max_steps_cap
@@ -141,15 +143,15 @@ def validate_and_freeze_profile(cfg: dict) -> None:
         if not allow_caps:
             if train_cfg.get("max_steps") is not None:
                 raise ValueError(
-                    "train.max_steps is only permitted in smoke/dev/dev_mini profiles."
+                    "train.max_steps is only permitted in smoke/dev/dev_mini/colab_quickstart profiles."
                 )
             if eval_cfg.get("max_batches") is not None:
                 raise ValueError(
-                    "eval.max_batches is only permitted in smoke/dev/dev_mini profiles."
+                    "eval.max_batches is only permitted in smoke/dev/dev_mini/colab_quickstart profiles."
                 )
             if str(dataset_cfg.get("source", "")).lower() == "fixture":
                 raise ValueError(
-                    "dataset.source=fixture is only permitted in smoke/dev/dev_mini profiles."
+                    "dataset.source=fixture is only permitted in smoke/dev/dev_mini/colab_quickstart profiles."
                 )
         splits_cfg.setdefault("allow_missing_classes", False)
     else:
