@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata in this file.
-title: Evaluation Protocols Matter — A Controlled Study on Protocol Sensitivity in Compact sEMG CNNs
+title: Evaluation Protocols Matter — A Controlled Study on Protocol Sensitivity in  sEMG CNNs
 type: software
 authors:
   - name: tinyml-semig-classifier contributors

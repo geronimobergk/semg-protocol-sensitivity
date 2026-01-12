@@ -1,6 +1,6 @@
 # Developer guide (contributor notes)
 
-This repo is a CLI-driven, config-first experiment harness for evaluating **protocol sensitivity** in compact sEMG CNNs.
+This repo is a CLI-driven, config-first experiment harness for evaluating **protocol sensitivity** in  sEMG CNNs.
 
 ## Setup
 

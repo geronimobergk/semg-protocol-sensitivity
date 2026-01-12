@@ -1,4 +1,4 @@
-# Evaluation Protocols Matter - A Controlled Study on Protocol Sensitivity in Compact sEMG CNNs
+# Evaluation Protocols Matter - A Controlled Study on Protocol Sensitivity in  sEMG CNNs
 
 ## 1. Motivation & Problem Statement
 
@@ -38,7 +38,7 @@ Because heavy window overlap can introduce information leakage, all dataset spli
 
 ### Models
 
-Two **compact spatio-temporal CNN architectures** are evaluated:
+Two ** spatio-temporal CNN architectures** are evaluated:
 
 * **ST-CNN:** baseline spatio-temporal convolutional network
 * **ST-Attn-CNN:** identical backbone augmented with spatio-temporal attention
@@ -180,7 +180,7 @@ Overall, these results demonstrate that **protocol sensitivity is both large and
 ### 4.1 Interpretation
 
 The results lead to a clear and methodologically important conclusion:
-**evaluation protocol choice dominates both absolute performance and apparent architectural effects in compact sEMG CNNs**.
+**evaluation protocol choice dominates both absolute performance and apparent architectural effects in  sEMG CNNs**.
 
 While the two architectures differ meaningfully in the single-subject setting, these differences collapse under pooled and cross-subject evaluation. In the LOSO regime, where models are tested on entirely unseen users, performance is uniformly low and nearly identical across architectures.
 
@@ -209,7 +209,7 @@ From a system-design perspective, this underscores the need for:
 
 This study is intentionally constrained and its conclusions should be interpreted accordingly:
 
-* The evaluated models are server-scale compact CNNs, not TinyML architectures, and the results do not directly translate to ultra-low-power, fully on-device deployments.
+* The evaluated models are server-scale  CNNs, not TinyML architectures, and the results do not directly translate to ultra-low-power, fully on-device deployments.
 * Only a single random seed is used per experiment to limit computational cost, which may underestimate variance due to initialization effects. Since protocol-induced effects exceed 50% relative drops, they however dominate initialization variance by an order of magnitude, making single-seed comparisons sufficient for this report.
 * Training is conducted with a fixed and relatively short budget of 50 epochs, potentially limiting convergence and favoring architectures with faster early learning dynamics.
 * Only one dataset (NinaPro DB2) and a single exercise subset (Exercise B) are considered, limiting generalization across datasets, sensor configurations, and gesture taxonomies.
@@ -223,7 +223,7 @@ These limitations are deliberate design choices to isolate protocol-induced effe
 
 ### 4.4 Conclusion and Outlook
 
-**This study shows that evaluation protocol choice alone can reverse architectural conclusions in compact sEMG CNNs, highlighting protocol sensitivity as a first-order concern for both scientific interpretation and real-world deployment.**
+**This study shows that evaluation protocol choice alone can reverse architectural conclusions in  sEMG CNNs, highlighting protocol sensitivity as a first-order concern for both scientific interpretation and real-world deployment.**
 
 The observed collapse of architectural differences under cross-subject evaluation motivates future work beyond supervised model design, including:
 
