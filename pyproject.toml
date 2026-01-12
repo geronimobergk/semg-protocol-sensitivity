@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tinyml_semg_classifier"
 version = "0.1.0"
-description = "Supervised tiny sEMG classifier for NinaPro DB2 Exercise B."
+description = "End-to-end sEMG experiment pipeline that prepares NinaPro DB2, generates leakage-safe protocol splits (pooled/LOSO/single-subject), runs train+eval, and emits aggregated reports."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
