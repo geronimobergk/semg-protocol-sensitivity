@@ -46,5 +46,4 @@ exclude = ["tests*", "notebooks*", "data*", "configs*", "reports*", "scripts*"]
 include-package-data = true
 
 [tool.setuptools.data-files]
-configs = ["configs/**/*.yaml"]
-scripts = ["scripts/*.sh"]
+configs = ["configs/**/*.yaml", "configs/**/*.yml"]

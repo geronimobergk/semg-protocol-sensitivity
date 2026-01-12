@@ -1,2 +1,1 @@
-recursive-include configs *.yaml
-recursive-include scripts *.sh
+recursive-include configs *.yaml *.yml
