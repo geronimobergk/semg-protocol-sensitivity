@@ -73,7 +73,6 @@ def size(
 
 
 def run_pipeline(cfg: dict, max_jobs: int | None = None) -> None:
-    download(cfg)
     prepare(cfg)
     splits(cfg)
     traineval(cfg, max_jobs=max_jobs)
@@ -210,7 +209,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     run_parser = subparsers.add_parser(
         "run",
-        help="Run full pipeline (download -> prepare -> splits -> traineval -> report)",
+        help="Run full pipeline (prepare -> splits -> traineval -> report)",
     )
     add_config_arg(run_parser)
     add_train_args(run_parser)
