@@ -33,6 +33,8 @@ artifacts/*
 reports/*
 !reports/README.md
 *.tar.gz
+notebooks/*.yaml
+notebooks/*.yml
 
 # OS
 .DS_Store
